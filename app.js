@@ -1,49 +1,39 @@
 /**
  * Fail: js/app.js
- * Tugasan: Ujian Amali 2 - Sistem Pengurusan Produk
- * Fungsi: Menguruskan operasi CRUD (Create, Read, Delete) menggunakan Fetch API.
+ * Fungsi: Menguruskan paparan produk, Fetch API, Tambah dan Hapus.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Deklarasi pembolehubah untuk elemen DOM
     const productBody = document.getElementById('productBody');
     const productForm = document.getElementById('productForm');
 
-    /**
-     * FUNGSI: Ambil Data Produk (Fetch API)
-     * Mengambil 10 data produk daripada API luar (DummyJSON).
-     */
+    // 1. Fungsi Ambil Data daripada API (DummyJSON)
     const ambilDataProduk = async () => {
         try {
-            // Memanggil API menggunakan Fetch
-            const respons = await fetch('https://dummyjson.com/products?limit=10');
+            const respon = await fetch('https://dummyjson.com/products?limit=10');
             
-            // Semak jika respons berjaya
-            if (!respon.ok) throw new Error('Gagal mengambil data daripada API');
+            if (!respon.ok) throw new Error('Ralat rangkaian');
 
-            const data = await respons.json();
+            const data = await respon.json();
 
-            // Masukkan setiap produk ke dalam jadual
+            // Kosongkan mesej ralat jika ada sebelum masukkan data
+            productBody.innerHTML = '';
+
             data.products.forEach(produk => {
-                tambahBarisJadual(produk.title, produk.category, produk.price);
+                tambahBarisKeJadual(produk.title, produk.category, produk.price);
             });
             
-            console.log('10 Produk pertama berjaya dimuatkan dari API.');
+            console.log('Data API berjaya dimuatkan.');
         } catch (ralat) {
-            console.error('Ralat:', ralat);
-            // Paparkan mesej ralat jika API gagal
-            productBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Gagal memuatkan data produk.</td></tr>`;
+            console.error('Ralat API:', ralat);
+            productBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Gagal memuatkan data produk. Sila periksa sambungan internet.</td></tr>`;
         }
     };
 
-    /**
-     * FUNGSI: Tambah Baris ke Jadual
-     * Mencipta elemen baris (TR) dan sel (TD) secara dinamik.
-     */
-    const tambahBarisJadual = (nama, kategori, harga, prepend = false) => {
+    // 2. Fungsi untuk menambah baris ke dalam jadual
+    const tambahBarisKeJadual = (nama, kategori, harga, diAtas = false) => {
         const tr = document.createElement('tr');
 
-        // Struktur kandungan baris
         tr.innerHTML = `
             <td>${nama}</td>
             <td>${kategori}</td>
@@ -51,51 +41,34 @@ document.addEventListener('DOMContentLoaded', () => {
             <td><button class="delete-btn">Hapus</button></td>
         `;
 
-        // Logik Butang Hapus: Menghapuskan baris daripada paparan (UI)
+        // Fungsi Butang Hapus
         tr.querySelector('.delete-btn').addEventListener('click', () => {
-            // Pengesahan sebelum hapus
-            const sahkan = confirm(`Adakah anda pasti ingin menghapuskan produk "${nama}"?`);
-            if (sahkan) {
+            if (confirm(`Hapus produk ${nama}?`)) {
                 tr.remove();
-                console.log(`Produk "${nama}" telah dihapuskan.`);
             }
         });
 
-        // Masukkan baris ke dalam badan jadual
-        if (prepend) {
-            // Produk baru dari borang akan muncul di atas sekali
+        if (diAtas) {
             productBody.prepend(tr);
         } else {
-            // Produk dari API akan muncul mengikut turutan
             productBody.appendChild(tr);
         }
     };
 
-    /**
-     * EVENT LISTENER: Borang Tambah Produk
-     * Menangkap data daripada input pengguna apabila butang hantar diklik.
-     */
+    // 3. Event Listener untuk Borang Tambah Produk
     productForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Menghalang halaman daripada segar semula (refresh)
+        e.preventDefault();
 
-        // Ambil nilai daripada input borang
-        const namaProduk = document.getElementById('productName').value;
-        const kategoriProduk = document.getElementById('productCategory').value;
-        const hargaProduk = document.getElementById('productPrice').value;
+        const nama = document.getElementById('productName').value;
+        const kategori = document.getElementById('productCategory').value;
+        const harga = document.getElementById('productPrice').value;
 
-        // Validasi ringkas untuk memastikan semua kotak diisi
-        if (namaProduk && kategoriProduk && hargaProduk) {
-            // Panggil fungsi tambah baris (set prepend ke true)
-            tambahBarisJadual(namaProduk, kategoriProduk, hargaProduk, true);
-            
-            // Bersihkan borang selepas berjaya ditambah
+        if (nama && kategori && harga) {
+            tambahBarisKeJadual(nama, kategori, harga, true);
             productForm.reset();
-            alert('Produk berjaya ditambah ke dalam senarai!');
-        } else {
-            alert('Sila isi semua maklumat produk.');
         }
     });
 
-    // 2. Jalankan fungsi pengambilan data sebaik sahaja aplikasi dimuatkan
+    // Jalankan fungsi fetch bila halaman dibuka
     ambilDataProduk();
 });
