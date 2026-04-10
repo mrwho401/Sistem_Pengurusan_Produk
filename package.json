@@ -1,0 +1,24 @@
+{
+  "name": "sistem_pengurusan_produk_arifiskandarbinmohdhafiz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrwho401/Sistem_Pengurusan_Produk.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mrwho401/Sistem_Pengurusan_Produk/issues"
+  },
+  "homepage": "https://github.com/mrwho401/Sistem_Pengurusan_Produk#readme",
+  "devDependencies": {
+    "cypress": "^15.13.1"
+  }
+}
